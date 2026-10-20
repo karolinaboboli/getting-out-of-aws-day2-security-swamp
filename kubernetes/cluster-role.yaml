@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ops-limited-access
+  labels:
+    app.kubernetes.io/managed-by: security-team
+    app.kubernetes.io/purpose: operations-access
+# NOTE: Read/view access (pods, deployments, logs, nodes, etc.) comes from the
+# AWS-managed EKS access policy AmazonEKSAdminViewPolicy, associated to the same
+# access entry as the ops-engineers group mapping. This ClusterRole adds ONLY
+# the extra actions that AmazonEKSAdminViewPolicy does not grant.
+rules:
+  # Deployment restarts cluster-wide (kubectl rollout restart patches the
+  # pod-template annotation, so patch + update are required)
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["patch", "update"]
+ 
+  # PersistentVolumeClaims - full management cluster-wide
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["create", "update", "patch", "delete"]
