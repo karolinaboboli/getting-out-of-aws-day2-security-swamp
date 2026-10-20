@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cache-writer
+  namespace: cicd-apps
+spec:
+  containers:
+    - name: app
+      image: public.ecr.aws/docker/library/busybox:latest
+      command: ["sh", "-c", "echo hello > /data/test.txt && sleep 3600"]
+      volumeMounts:
+        - name: cache
+          mountPath: /data
+  volumes:
+    - name: cache
+      persistentVolumeClaim:
+        claimName: artifacts-cache

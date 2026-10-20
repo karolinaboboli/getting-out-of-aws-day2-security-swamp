@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: artifacts-cache
+  namespace: cicd-apps
+  labels:
+    app.kubernetes.io/managed-by: security-team
+spec:
+  accessModes:
+    - ReadWriteOnce          # EBS volumes are single-node (RWO)
+  storageClassName: ebs-gp3
+  resources:
+    requests:
+      storage: 20Gi
