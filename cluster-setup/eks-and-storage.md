@@ -238,6 +238,7 @@ aws iam create-role \
 for POLICY in \
     AmazonEKSWorkerNodePolicy \
     AmazonEKS_CNI_Policy \
+    AmazonSSMManagedInstanceCore \
     AmazonEC2ContainerRegistryReadOnly ; do
   aws iam attach-role-policy \
       --role-name "$NODE_ROLE_NAME" \
