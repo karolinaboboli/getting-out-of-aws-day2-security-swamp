@@ -38,7 +38,8 @@ The talk covers:
 │   ├── cluster-role.yaml              # ops-limited-access ClusterRole
 │   └── cluster-role-binding.yaml      # ops-limited-access-binding ClusterRoleBinding
 ├── iam-keys/
-│   └── iam-keys-demo.md               # IAM user + access key lifecycle / rotation demo
+│   ├── iam-keys-setup.md              # Create demo IAM user + static key (SETUP)
+│   └── iam-keys-rotation.md           # Rotate: new key → deactivate → delete old
 ├── cloudtrail-analysis/
 │   └── cloudtrail-analysis.md         # CloudWatch Logs Insights queries + guide
 ├── cloudify/
@@ -51,9 +52,7 @@ The talk covers:
 
 ## 🧭 Technical Walkthrough
 
-This is the end-to-end order to run the demo. Follow the phases top to bottom:
-**SETUP** builds the environment and recreates the incident, then **REMEDIATION**
-walks the parallel fix the talk describes.
+This is the end-to-end order to run the demo. 
 
 ### Assumptions
 
@@ -68,14 +67,14 @@ walks the parallel fix the talk describes.
 
 ---
 
-### Phase 1 — SETUP
+### Phase 1 — SETUP & ANALYSIS
 
 Build the environment, then recreate the incident.
 
 | # | Do this | Guide |
 |---|---------|-------|
 | 1 | **Create the EKS cluster and cluster resources** — VPC, subnets, security group, node group, EBS CSI driver, then namespaces, StorageClass, PVC, and a demo workload. | [cluster-setup/eks-and-storage.md](cluster-setup/eks-and-storage.md) |
-| 2 | **Create the IAM user and access keys (demo)** — the admin user with a long-term static key that stands in for the leaked "installation key". | [iam-keys/iam-keys-demo.md](iam-keys/iam-keys-demo.md) |
+| 2 | **Create the IAM user and access keys (demo)** — the admin user with a long-term static key that stands in for the leaked "installation key". | [iam-keys/iam-keys-setup.md](iam-keys/iam-keys-setup.md) |
 | 3 | **Start CloudTrail analysis for the old key** — begin tracking the key's activity **as soon as it's created**, so you have a full usage history before any rotation. | [cloudtrail-analysis/cloudtrail-analysis.md](cloudtrail-analysis/cloudtrail-analysis.md) |
 
 At the end of SETUP you have a running cluster and a long-term admin key actively
@@ -95,7 +94,7 @@ without it.
 | 2 | **Kubernetes role setup** | Apply the `ops-limited-access` ClusterRole + binding (view via the managed access policy; restart deployments and manage PVCs via RBAC). | [kubernetes/README.md](kubernetes/README.md) |
 | 3 | **Access config setup** | Create the EKS access entry mapping the SSO role to the `ops-engineers` group and associate the view access policy. | [access-setup/eks-access-entries.md](access-setup/eks-access-entries.md) |
 | 4 | **Training: SSO login + testing** | Have an operations engineer log in via SSO (console + CLI) and verify they can do their job with temporary credentials — no static keys. Do this **before** rotation so the team is comfortable on the new setup and nobody gets blocked. | [access-setup/console-access-guide.md](access-setup/console-access-guide.md) · [access-setup/cli-access-guide.md](access-setup/cli-access-guide.md) |
-| 5 | **IAM key rotation** | Only after the team is trained and working via SSO: create a new key, switch to it, deactivate then delete the old key. Use the CloudTrail analysis you started in SETUP to prove the old key is unused **before** deleting it. | [iam-keys/iam-keys-demo.md](iam-keys/iam-keys-demo.md) · [cloudtrail-analysis/cloudtrail-analysis.md](cloudtrail-analysis/cloudtrail-analysis.md) |
+| 5 | **IAM key rotation** | Only after the team is trained and working via SSO: create a new key, switch to it, deactivate then delete the old key. Use the CloudTrail analysis you started in SETUP to prove the old key is unused **before** deleting it. | [iam-keys/iam-keys-rotation.md](iam-keys/iam-keys-rotation.md) · [cloudtrail-analysis/cloudtrail-analysis.md](cloudtrail-analysis/cloudtrail-analysis.md) |
 
 By the end of REMEDIATION, the shared static key is gone and every engineer uses
 individual, auto-expiring SSO credentials — the outcome the talk is about.
@@ -106,18 +105,33 @@ individual, auto-expiring SSO credentials — the outcome the talk is about.
 
 All examples use placeholder values (account IDs, ARNs, URLs). Replace with your own values before use. This is educational material based on a real incident — details have been anonymized.
 
-## 📚 Contents
+## 📚 Technical Walkthrough Contents
 
-- [Risk assessment](docs/risk-assessment.md)
+The hands-on guides, in the order the [walkthrough](#-technical-walkthrough) runs them:
+
+### Setup
+
+- [EKS cluster & storage setup](cluster-setup/eks-and-storage.md)
+- [IAM user & access key — initial setup](iam-keys/iam-keys-setup.md)
+
+### Remediation
+
 - [CloudTrail log analysis](cloudtrail-analysis/cloudtrail-analysis.md)
 - [IAM permission set: LimitedWorkingAccess](access-setup/policies.md)
-- [EKS cluster & storage setup](cluster-setup/eks-and-storage.md)
-- [Kubernetes RBAC configuration](kubernetes/README.md)
 - [IAM Identity Center setup](access-setup/iam-identity-center.md)
+- [Kubernetes RBAC configuration](kubernetes/README.md)
 - [EKS access entries](access-setup/eks-access-entries.md)
 - [AWS Console access guide](access-setup/console-access-guide.md)
 - [AWS CLI SSO guide](access-setup/cli-access-guide.md)
-- [IAM user & access key rotation demo](iam-keys/iam-keys-demo.md)
+- [IAM access key rotation](iam-keys/iam-keys-rotation.md)
+
+
+
+## 📖 Additional Content
+
+Background, context, and supporting material:
+
+- [Risk assessment](docs/risk-assessment.md)
 - [Cloudify temporary credentials](cloudify/temporary-credentials.md)
 - [Lessons learned](docs/lessons-learned.md)
 - [Change management](docs/change-management.md)
