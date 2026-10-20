@@ -67,31 +67,6 @@ In Microsoft Entra ID (Azure Portal):
       "Resource": "arn:aws:eks:*:*:cluster/cicd-*"
     },
     {
-      "Sid": "CloudWatchLogsAccess",
-      "Effect": "Allow",
-      "Action": [
-        "logs:GetLogEvents",
-        "logs:FilterLogEvents",
-        "logs:StartQuery",
-        "logs:GetQueryResults",
-        "logs:DescribeLogGroups"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "S3OperationsAccess",
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:ListBucket",
-        "s3:PutObject"
-      ],
-      "Resource": [
-        "arn:aws:s3:::cicd-artifacts-*",
-        "arn:aws:s3:::cicd-artifacts-*/*"
-      ]
-    },
-    {
       "Sid": "SSMStartSessionOnTaggedInstances",
       "Effect": "Allow",
       "Action": "ssm:StartSession",
