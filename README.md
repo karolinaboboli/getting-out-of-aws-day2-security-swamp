@@ -45,6 +45,7 @@ The talk covers:
 ├── cloudify/
 │   └── temporary-credentials.md       # Cloudify temporary credentials guide
 └── docs/
+    ├── the-story.md                   # The incident story — context for the walkthrough
     ├── risk-assessment.md             # Risk assessment document
     ├── lessons-learned.md             # Lessons learned
     └── change-management.md           # Organizational change management tips
