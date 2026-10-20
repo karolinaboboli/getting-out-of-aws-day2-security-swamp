@@ -54,7 +54,11 @@ The talk covers:
 
 This is the end-to-end order to run the demo.
 
-> Note: Cloudify is mentioned only to give additional context. We are not going to set up a Cloudify instance or create Cloudify blueprints in the walkthrough.
+> 📖 **Read this first:** [The Story](docs/the-story.md) — the real-world incident
+> this walkthrough reproduces and remediates. It explains the *why* behind every
+> step below.
+
+
 
 ```mermaid
 flowchart LR
@@ -83,6 +87,8 @@ flowchart LR
     class DEACT,DEL danger;
     class SWITCH safe;
 ```
+
+> Note: Cloudify is mentioned in the diagram only to give additional context. We are not going to set up a Cloudify instance or create Cloudify blueprints in the walkthrough.
 
 ### Assumptions
 
@@ -161,6 +167,7 @@ The hands-on guides, in the order the [walkthrough](#-technical-walkthrough) run
 
 Background, context, and supporting material:
 
+- [The Story — context behind the walkthrough](docs/the-story.md)
 - [Risk assessment](docs/risk-assessment.md)
 - [Cloudify temporary credentials](cloudify/temporary-credentials.md)
 - [Lessons learned](docs/lessons-learned.md)
