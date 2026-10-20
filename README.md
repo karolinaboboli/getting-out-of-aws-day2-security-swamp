@@ -52,7 +52,37 @@ The talk covers:
 
 ## 🧭 Technical Walkthrough
 
-This is the end-to-end order to run the demo. 
+This is the end-to-end order to run the demo.
+
+> Note: Cloudify is mentioned only to give additional context. We are not going to set up a Cloudify instance or create Cloudify blueprints in the walkthrough.
+
+```mermaid
+flowchart LR
+    START["Recreate the incident-day state<br/>• EKS cluster<br/>• IAM key"]
+
+    %% Path 1 — new access for the team
+    START --> P1A["Create new permission<br/>setup for the team"]
+    P1A --> P1B["Train the operations team"]
+
+    %% Path 2 — analysis + key rotation
+    START --> AN1["Start analysis of<br/>the key usage"]
+    AN1 --> AN2["Continue analysis<br/>of the key usage"]
+    AN1 --> NK["Create a new key<br/>and update Cloudify"]
+
+    %% Converge on deactivation
+    P1B --> DEACT["Deactivate the old key"]
+    AN2 --> DEACT
+    NK --> DEACT
+
+    DEACT --> VERIFY["Continue analysis: make sure the<br/>old key is not used by anyone and the new key<br/>is used only by Cloudify"]
+    VERIFY --> DEL["Delete the old key"]
+    DEL --> SWITCH["Switch Cloudify to the<br/>temporary permissions"]
+
+    classDef danger fill:#ffe5e5,stroke:#c0392b,color:#7b241c;
+    classDef safe fill:#e8f6ef,stroke:#1e8449,color:#145a32;
+    class DEACT,DEL danger;
+    class SWITCH safe;
+```
 
 ### Assumptions
 
