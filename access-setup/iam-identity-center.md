@@ -50,9 +50,82 @@ In Microsoft Entra ID (Azure Portal):
 | Description          | Read-only access with limited write permissions for CICD operations |
 | Session duration     | 4 hours                                                             |
 | AWS managed policies | ReadOnlyAccess                                                      |
-| Inline policy        | Paste the JSON from the IAM Permission Set section                  |
+| Inline policy        | Paste the JSON policy content                  |
 
-1. Review and create
+### Inline policy content
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EKSOperationsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "eks:AccessKubernetesApi"
+      ],
+      "Resource": "arn:aws:eks:*:*:cluster/cicd-*"
+    },
+    {
+      "Sid": "CloudWatchLogsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "logs:GetLogEvents",
+        "logs:FilterLogEvents",
+        "logs:StartQuery",
+        "logs:GetQueryResults",
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3OperationsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::cicd-artifacts-*",
+        "arn:aws:s3:::cicd-artifacts-*/*"
+      ]
+    },
+    {
+      "Sid": "SSMStartSessionOnTaggedInstances",
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": "arn:aws:ec2:*:*:instance/*",
+      "Condition": {
+        "StringLike": {
+          "ssm:resourceTag/Environment": ["cicd-*"]
+        }
+      }
+    },
+    {
+      "Sid": "SSMSessionDocuments",
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": [
+        "arn:aws:ssm:*:*:document/SSM-SessionManagerRunShell",
+        "arn:aws:ssm:*:*:document/AWS-StartInteractiveCommand",
+        "arn:aws:ssm:*:*:document/AWS-StartPortForwardingSession"
+      ]
+    },
+    {
+      "Sid": "SSMManageOwnSessions",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:TerminateSession",
+        "ssm:ResumeSession"
+      ],
+      "Resource": "arn:aws:ssm:*:*:session/${aws:username}-*"
+    }
+  ]
+}
+```
+
+5. Review and create
 
 ## Step 4: Associate with AWS Accounts
 
