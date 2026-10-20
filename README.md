@@ -4,8 +4,8 @@
 
 **The H@ck Summit 2026** — Warsaw, November 5–6, 2026
 
-**Karolina**  
-AWS Security Architect · Trek2Summit / AWS Community
+**Karolina Boboli**  
+AWS Solutions Architect & Consultant / AWS Community Hero
 
 This repository contains all supporting materials for the talk "Getting Out of AWS Day 2 Security Swamp and Survive It" — a real-world case study about discovering shared long-term IAM credentials published on a company's Confluence page, and the parallel remediation strategy that followed.
 
