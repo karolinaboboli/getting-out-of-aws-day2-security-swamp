@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-apps
+  labels:
+    environment: cicd-production
+    app.kubernetes.io/managed-by: security-team
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-data
+  labels:
+    environment: cicd-production
+    app.kubernetes.io/managed-by: security-team
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-tooling
+  labels:
+    environment: cicd-production
+    app.kubernetes.io/managed-by: security-team

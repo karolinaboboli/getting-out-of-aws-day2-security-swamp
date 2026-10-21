@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-web
+  namespace: cicd-apps
+  labels:
+    app: hello-web
+spec:
+  replicas: 2
+  # Stateless: no shared volume, so rolling updates are safe.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: hello-web
+  template:
+    metadata:
+      labels:
+        app: hello-web
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo:latest
+          args:
+            - "-listen=:5678"
+            - "-text=hello from cicd-apps"
+          ports:
+            - containerPort: 5678
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5678
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5678
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-web
+  namespace: cicd-apps
+  labels:
+    app: hello-web
+spec:
+  type: ClusterIP
+  selector:
+    app: hello-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5678
